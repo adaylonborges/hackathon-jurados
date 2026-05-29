@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spoint AI Hackathon - Avaliação</title>
+    <meta name="description" content="Sistema de avaliação de projetos do Spoint AI Hackathon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-container">
+        <div class="login-box">
+            <div class="logo-container" style="margin-bottom: 2rem; text-align: center;">
+                <h1 class="logo">spoint<span class="dot">.</span></h1>
+                <p class="subtitle">AI HACKATHON &middot; JUN/2026</p>
+            </div>
+            <h2 style="font-family: var(--font-heading); margin-bottom: 1.5rem; text-align: center;">Acesso do Jurado</h2>
+            <form id="login-form">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="login-username">Usuário</label>
+                    <input type="text" id="login-username" class="custom-input" placeholder="ex: ana.batista" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 2rem;">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" class="custom-input" placeholder="***" required>
+                </div>
+                <div id="login-error" class="login-error" style="display: none; color: #ff4757; margin-bottom: 1rem; font-size: 0.9rem; text-align: center;">Usuário ou senha incorretos.</div>
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                    Entrar
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- App Screen -->
+    <div id="app-screen" class="app-container" style="display: none;">
+        <!-- Sidebar / Navigation -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <h1 class="logo">spoint<span class="dot">.</span></h1>
+                <p class="subtitle">AI HACKATHON &middot; JUN/2026</p>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" id="nav-vote">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                    Nova Avaliação
+                </button>
+                <button class="nav-item" id="nav-results">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                    Resultados & Export
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="user-label">Jurado Logado</span>
+                        <span class="user-name" id="logged-user-name">Nome do Jurado</span>
+                    </div>
+                    <button id="logout-btn" class="btn-logout" title="Sair">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    </button>
+                </div>
+                <div class="total-points-display" style="margin-top: 1rem;">
+                    <span class="label">Total Points</span>
+                    <span class="value" id="sidebar-total">0/10</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- View: Voting Form -->
+            <section id="view-vote" class="view-section active-view">
+                <header class="section-header">
+                    <h2>MECÂNICA DE <span class="highlight">AVALIAÇÃO</span></h2>
+                    <p>Preencha os dados abaixo para submeter a nota da dupla. (Selecione notas de 0 a 2. Os pesos serão calculados automaticamente)</p>
+                </header>
+
+                <form id="evaluation-form" class="evaluation-form">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jurado">Jurado</label>
+                            <input type="text" id="jurado" name="jurado" class="custom-input" readonly style="background-color: rgba(0,0,0,0.2); color: var(--text-muted); cursor: not-allowed;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="projeto">Projeto / Dupla</label>
+                            <input type="text" id="projeto" name="projeto" required placeholder="Nome do projeto ou da dupla" class="custom-input">
+                        </div>
+                    </div>
+
+                    <div class="rubrics-container">
+                        <!-- Engenharia -->
+                        <div class="rubric-card">
+                            <div class="rubric-header">
+                                <h3>💻 Engenharia & Readiness</h3>
+                                <span class="points-badge">0-4 PTS (Peso 2)</span>
+                            </div>
+                            <p class="rubric-description" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.4;">Este bloco avalia o produto real e a qualidade do código gerado e orquestrado pelas IAs.</p>
+                            <ul class="rubric-guidelines">
+                                <li><span class="pts">0</span> O código não compila, não funciona ou a dupla violou alguma das regras de governança do evento.</li>
+                                <li><span class="pts">1</span> Roda parcialmente, foge do Tech Plan ou pula testes/PR.</li>
+                                <li><span class="pts">2</span> Entrega em nível de produção. O projeto deve possuir uma Pull Request (PR) formalmente aberta, revisada por pares e aprovada, com código limpo, testado e pronto para o deploy.</li>
+                            </ul>
+                            <div class="score-selector" data-target="eng_score">
+                                <label class="score-option"><input type="radio" name="eng_score" value="0" required><span>0</span></label>
+                                <label class="score-option"><input type="radio" name="eng_score" value="1"><span>1</span></label>
+                                <label class="score-option"><input type="radio" name="eng_score" value="2"><span>2</span></label>
+                            </div>
+                        </div>
+
+                        <!-- Negocio -->
+                        <div class="rubric-card">
+                            <div class="rubric-header">
+                                <h3>📈 Impacto no Negócio</h3>
+                                <span class="points-badge">0-4 PTS (Peso 2)</span>
+                            </div>
+                            <p class="rubric-description" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.4;">A dupla precisa provar no pitch e na demo como a funcionalidade desenvolvida traz retorno real para o ecossistema Spoint/Centauro.</p>
+                            <ul class="rubric-guidelines">
+                                <li><span class="pts">0</span> A solução não tem conexão com as dores reais do negócio ou gera riscos de perda de receita.</li>
+                                <li><span class="pts">1</span> Hipótese plausível mas sem aterrissagem em DAU/MAU/ROB/LB.</li>
+                                <li><span class="pts">2</span> A solução atende perfeitamente e comprova potencial de impacto direto em indicadores corporativos (DAU/MAU, Recorrentes, Spending, Margem, ROB, LB).</li>
+                            </ul>
+                            <div class="score-selector" data-target="neg_score">
+                                <label class="score-option"><input type="radio" name="neg_score" value="0" required><span>0</span></label>
+                                <label class="score-option"><input type="radio" name="neg_score" value="1"><span>1</span></label>
+                                <label class="score-option"><input type="radio" name="neg_score" value="2"><span>2</span></label>
+                            </div>
+                        </div>
+
+                        <!-- Experiencia -->
+                        <div class="rubric-card">
+                            <div class="rubric-header">
+                                <h3>🎨 Experiência do Cliente Final</h3>
+                                <span class="points-badge">0-2 PTS (Peso 1)</span>
+                            </div>
+                            <p class="rubric-description" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.4;">Avalia se a solução foi pensada para o atleta real, não só para o sistema.</p>
+                            <ul class="rubric-guidelines">
+                                <li><span class="pts">0</span> A demo não é navegável ou o fluxo exige explicação para ser compreendido.</li>
+                                <li><span class="pts">1</span> O fluxo principal funciona e é compreensível, mas tem fricção evitável ou estados não tratados (erro, loading, vazio).</li>
+                                <li><span class="pts">2</span> A jornada do cliente é fluida do início ao fim — estados de loading, erro e sucesso tratados, linguagem consistente com o produto Spoint, e pelo menos um momento de deleite intencional.</li>
+                            </ul>
+                            <div class="score-selector" data-target="exp_score">
+                                <label class="score-option"><input type="radio" name="exp_score" value="0" required><span>0</span></label>
+                                <label class="score-option"><input type="radio" name="exp_score" value="1"><span>1</span></label>
+                                <label class="score-option"><input type="radio" name="exp_score" value="2"><span>2</span></label>
+                            </div>
+                        </div>
+
+                        <!-- Critérios de Desclassificação -->
+                        <div class="disqualification-card" style="background: rgba(255, 71, 87, 0.1); border: 1px solid #ff4757; border-radius: 12px; padding: 2rem; margin-top: 1rem;">
+                            <div class="rubric-header" style="margin-bottom: 1rem;">
+                                <h3 style="color: #ff4757; font-size: 1.2rem;">❌ Critérios de Desclassificação Imediata</h3>
+                            </div>
+                            <p style="font-size: 0.85rem; color: #ffcccc; margin-bottom: 1rem; line-height: 1.4;">Para garantir o rigor técnico e a seriedade do evento, a dupla será desclassificada se:</p>
+                            <ul class="disqualification-list" style="list-style: none; color: #ffcccc; font-size: 0.9rem; padding-left: 0;">
+                                <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start; gap: 0.5rem;">
+                                    <span style="color: #ff4757;">•</span>
+                                    <span><strong>Escolher um tema aleatório:</strong> Atuar em um escopo que não esteja na pasta oficial de PRDs ou que não tenha sido aprovado e documentado previamente.</span>
+                                </li>
+                                <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start; gap: 0.5rem;">
+                                    <span style="color: #ff4757;">•</span>
+                                    <span><strong>Não utilizar IA:</strong> Desenvolver o código de forma puramente manual, ignorando as ferramentas de AIDD.</span>
+                                </li>
+                                <li style="display: flex; align-items: flex-start; gap: 0.5rem;">
+                                    <span style="color: #ff4757;">•</span>
+                                    <span><strong>Não utilizar os PRDs:</strong> Ignorar o fluxo de desenvolvimento e tentar codificar direto sem passar pelas fases obrigatórias de Reflexão e Tech Plan.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <div class="final-score">
+                            Nota Final: <span id="form-total-score">0</span><span class="max-pts">/10</span>
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            Submeter Avaliação
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- View: Results -->
+            <section id="view-results" class="view-section">
+                <header class="section-header">
+                    <h2>DADOS DAS <span class="highlight">AVALIAÇÕES</span></h2>
+                    <p>Gerencie e exporte os votos submetidos neste dispositivo.</p>
+                </header>
+                
+                <div class="results-actions">
+                    <button id="export-csv" class="btn-secondary">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Exportar para CSV
+                    </button>
+                    <button id="copy-data" class="btn-secondary" style="margin-left: 0.5rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        Copiar Tabela (Colar no Sheets)
+                    </button>
+                    <button id="clear-data" class="btn-danger">Limpar Dados</button>
+                </div>
+
+                <div class="table-container">
+                    <table id="results-table">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Jurado</th>
+                                <th>Projeto</th>
+                                <th>Votos (E/N/X)</th>
+                                <th>Pts Eng.</th>
+                                <th>Pts Neg.</th>
+                                <th>Pts Exp.</th>
+                                <th>Total Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-body">
+                            <!-- Rows populated by JS -->
+                        </tbody>
+                    </table>
+                    <div id="empty-state" class="empty-state">
+                        Nenhuma avaliação registrada ainda.
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">
+        Avaliação salva com sucesso!
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
